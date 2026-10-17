@@ -28,7 +28,9 @@ export function FiltrosInspecciones({ productos, filtros, onCambiar }: Props) {
 
   return (
     <div className="flex flex-col gap-4 md:flex-row md:flex-wrap md:items-end">
-      <div className="md:w-60">
+      {/* El select cede ancho (de 240 a 192 px) para que quepa junto al
+          control segmentado en paneles medianos (laptop de 1100 px). */}
+      <div className="md:max-w-60 md:min-w-48 md:flex-1">
         <Field id="filtro-producto" etiqueta="Producto">
           {(control) => (
             <Select
