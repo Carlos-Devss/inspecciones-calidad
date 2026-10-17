@@ -65,10 +65,15 @@
   }
 }
 
-/* Fila recién guardada: fondo tenue que se desvanece en 1.5 s. */
+/*
+ * Fila recién guardada: fondo tenue que se sostiene un momento y se
+ * desvanece; en total 1.5 s. Se parte de `borde` (acero sobre blanco casi
+ * no se distingue).
+ */
 @keyframes resaltar {
-  from {
-    background-color: var(--color-acero);
+  0%,
+  30% {
+    background-color: color-mix(in srgb, var(--color-borde) 70%, transparent);
   }
   to {
     background-color: transparent;
@@ -94,6 +99,6 @@
 
   .fila-nueva {
     animation: none !important;
-    background-color: var(--color-acero);
+    background-color: color-mix(in srgb, var(--color-borde) 70%, transparent);
   }
 }
