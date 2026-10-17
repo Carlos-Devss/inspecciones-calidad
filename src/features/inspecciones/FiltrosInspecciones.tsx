@@ -67,10 +67,13 @@ export function FiltrosInspecciones({ productos, filtros, onCambiar }: Props) {
         }
       />
 
+      {/* Botón secundario con borde, alineado al borde de los controles:
+          a todo el ancho debajo de los filtros en móvil y con ancho natural
+          desde 640 px (junto a ellos desde 768 px). */}
       {hayFiltros && (
         <Button
-          variante="sutil"
-          className="self-start md:self-auto"
+          variante="secundario"
+          className="w-full sm:w-auto sm:self-start md:self-auto"
           onClick={() => onCambiar({})}
         >
           Limpiar filtros
