@@ -31,7 +31,7 @@ export function FiltrosInspecciones({ productos, filtros, onCambiar }: Props) {
       {/* El select cede ancho (de 240 a 192 px) para que quepa junto al
           control segmentado en paneles medianos (laptop de 1100 px). */}
       <div className="md:max-w-60 md:min-w-48 md:flex-1">
-        <Field id="filtro-producto" etiqueta="Producto">
+        <Field id="filtro-producto" etiqueta="Filtrar por producto">
           {(control) => (
             <Select
               {...control}
@@ -55,7 +55,7 @@ export function FiltrosInspecciones({ productos, filtros, onCambiar }: Props) {
       </div>
 
       <SegmentedControl
-        etiqueta="Resultado"
+        etiqueta="Filtrar por resultado"
         nombre="filtro-resultado"
         opciones={OPCIONES_RESULTADO}
         valor={filtros.resultado ?? ""}
