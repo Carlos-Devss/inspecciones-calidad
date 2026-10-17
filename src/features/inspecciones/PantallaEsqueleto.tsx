@@ -54,7 +54,7 @@ export function PantallaEsqueleto() {
       </aside>
 
       <div className={COLUMNA_LISTADO}>
-        <TarjetasResumen resumen={null} filtrosActivos={[]} />
+        <TarjetasResumen listado={null} filtrosActivos={[]} />
         <Panel>
           <div className={ENCABEZADO_LISTADO}>
             <PanelTitulo>Registro de inspecciones</PanelTitulo>

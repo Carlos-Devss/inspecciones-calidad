@@ -178,7 +178,7 @@ export function PantallaInspecciones() {
         {!fallo && (
           <div aria-busy={pendiente} className={atenuado}>
             <TarjetasResumen
-              resumen={listado?.resumen ?? null}
+              listado={listado}
               filtrosActivos={filtrosActivos}
             />
           </div>

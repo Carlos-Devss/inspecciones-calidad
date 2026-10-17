@@ -1,22 +1,37 @@
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 import { SkeletonTexto } from "@/components/ui/Skeleton";
 import { unir } from "@/components/ui/clases";
-import type { ResumenInspecciones } from "@/domain/resumen";
-import { formatearEntero, formatearPorcentaje } from "./formato";
+import type { ListadoInspecciones } from "@/shared/inspeccion.types";
+import {
+  describirDefectuosas,
+  describirResultados,
+  formatearEntero,
+  formatearPorcentaje,
+} from "./formato";
 
 type Props = {
   // null mientras llega la primera respuesta: se muestra el esqueleto.
-  resumen: ResumenInspecciones | null;
+  listado: ListadoInspecciones | null;
   // Nombres de los filtros activos, p. ej. ["Pinzas", "Rechazado"].
   filtrosActivos: string[];
 };
 
-const RETICULA = "grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4";
-const TARJETA = "rounded-panel border border-borde bg-lamina p-4";
-// La tercera tarjeta ocupa toda la fila en móvil.
-const TARJETA_ANCHA = "col-span-2 sm:col-span-1";
+// < 640 px: un solo panel con tres filas (etiqueta y detalle a la izquierda,
+// valor a la derecha). ≥ 640 px: tres tarjetas.
+const CONTENEDOR = unir(
+  "divide-y divide-borde rounded-panel border border-borde bg-lamina",
+  "sm:grid sm:grid-cols-3 sm:gap-4 sm:divide-y-0 sm:rounded-none sm:border-0 sm:bg-transparent",
+);
+const ELEMENTO = unir(
+  "@container grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 px-4 py-3",
+  "sm:grid-cols-1 sm:content-start sm:rounded-panel sm:border sm:border-borde sm:bg-lamina sm:p-4",
+);
+const ETIQUETA = "col-start-1 row-start-1";
+const VALOR =
+  "col-start-2 row-span-2 row-start-1 text-right sm:col-start-1 sm:row-span-1 sm:row-start-2 sm:mt-1 sm:text-left";
+const DETALLE = "col-start-1 row-start-2 sm:row-start-3 sm:mt-0.5";
 
-export function TarjetasResumen({ resumen, filtrosActivos }: Props) {
+export function TarjetasResumen({ listado, filtrosActivos }: Props) {
   return (
     <section aria-labelledby="titulo-resumen">
       <h2 id="titulo-resumen" className="sr-only">
@@ -30,30 +45,33 @@ export function TarjetasResumen({ resumen, filtrosActivos }: Props) {
           Mostrando: {filtrosActivos.join(", ")}
         </p>
       )}
-      {resumen ? <Totales resumen={resumen} /> : <TotalesEsqueleto />}
+      {listado ? <Totales listado={listado} /> : <TotalesEsqueleto />}
     </section>
   );
 }
 
-function Totales({ resumen }: { resumen: ResumenInspecciones }) {
+// Todo sale de la misma respuesta que la tabla: no pueden contradecirse.
+function Totales({ listado }: { listado: ListadoInspecciones }) {
+  const { resumen, inspecciones } = listado;
   const sinDatos = resumen.porcentajeGlobal === null;
   return (
-    <dl className={RETICULA}>
-      <Tarjeta etiqueta="Inspecciones">
+    <dl className={CONTENEDOR}>
+      <Tarjeta
+        etiqueta="Inspecciones"
+        detalle={describirResultados(inspecciones.map((i) => i.resultado))}
+      >
         {formatearEntero(resumen.totalInspecciones)}
       </Tarjeta>
-      <Tarjeta etiqueta="Unidades revisadas">
+      <Tarjeta
+        etiqueta="Unidades revisadas"
+        detalle={describirDefectuosas(resumen.totalDefectuosas)}
+      >
         {formatearEntero(resumen.totalRevisadas)}
       </Tarjeta>
       <Tarjeta
         etiqueta="Defectos globales"
-        className={TARJETA_ANCHA}
+        detalle="Defectuosas ÷ revisadas"
         secundario={sinDatos}
-        detalle={
-          sinDatos
-            ? undefined
-            : `${formatearEntero(resumen.totalDefectuosas)} de ${formatearEntero(resumen.totalRevisadas)} unidades`
-        }
       >
         {formatearPorcentaje(resumen.porcentajeGlobal)}
       </Tarjeta>
@@ -65,28 +83,39 @@ function Tarjeta({
   etiqueta,
   detalle,
   secundario = false,
-  className,
   children,
 }: {
   etiqueta: string;
-  detalle?: string;
+  // Varias piezas se separan con comas y cada una se mantiene en un renglón.
+  detalle: string | string[];
   secundario?: boolean;
-  className?: string;
   children: ReactNode;
 }) {
   return (
-    <div className={unir(TARJETA, className)}>
-      <dt className="text-etiqueta font-medium text-niebla">{etiqueta}</dt>
+    <div className={ELEMENTO}>
+      <dt className={unir(ETIQUETA, "text-etiqueta font-medium text-niebla")}>
+        {etiqueta}
+      </dt>
       <dd
         className={unir(
-          "mt-1 text-2xl font-semibold",
+          VALOR,
+          "text-2xl font-semibold",
           secundario ? "text-niebla" : "text-grafito",
         )}
       >
         {children}
       </dd>
-      {detalle && (
-        <dd className="mt-0.5 text-etiqueta text-niebla">{detalle}</dd>
+      {detalle.length > 0 && (
+        <dd className={unir(DETALLE, "text-etiqueta text-niebla")}>
+          {typeof detalle === "string"
+            ? detalle
+            : detalle.map((pieza, indice) => (
+                <Fragment key={pieza}>
+                  {indice > 0 && ", "}
+                  <span className="whitespace-nowrap">{pieza}</span>
+                </Fragment>
+              ))}
+        </dd>
       )}
     </div>
   );
@@ -95,18 +124,28 @@ function Tarjeta({
 // Misma retícula, tarjetas y alturas de línea que los totales reales.
 function TotalesEsqueleto() {
   return (
-    <div className={RETICULA}>
+    <div className={CONTENEDOR}>
       {["w-24", "w-28", "w-28"].map((ancho, indice) => (
-        <div
-          key={indice}
-          className={unir(TARJETA, indice === 2 && TARJETA_ANCHA)}
-        >
-          <SkeletonTexto className={ancho} />
-          <SkeletonTexto alto="mt-1 h-8" className="h-5 w-16" />
-          {/* Solo "Defectos globales" lleva línea de detalle. */}
-          {indice === 2 && (
-            <SkeletonTexto alto="mt-0.5 h-5" className="w-32" />
-          )}
+        <div key={indice} className={ELEMENTO}>
+          <SkeletonTexto alto={unir(ETIQUETA, "h-5")} className={ancho} />
+          <SkeletonTexto
+            alto={unir(VALOR, "h-8 justify-end sm:justify-start")}
+            className="h-5 w-16"
+          />
+          <div className={DETALLE}>
+            <SkeletonTexto className="w-32" />
+            {/* El conteo por resultado ocupa dos renglones en tarjeta y
+                tres si la tarjeta es angosta (menos de 208 px de contenido). */}
+            {indice === 0 && (
+              <>
+                <SkeletonTexto alto="hidden h-5 sm:flex" className="w-24" />
+                <SkeletonTexto
+                  alto="hidden h-5 sm:flex @min-[13rem]:hidden"
+                  className="w-20"
+                />
+              </>
+            )}
+          </div>
         </div>
       ))}
     </div>
