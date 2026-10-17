@@ -11,9 +11,22 @@ import type {
   Producto,
 } from "@/shared/inspeccion.types";
 import { construirQuery } from "./api-client";
+import {
+  COLUMNA_FORMULARIO,
+  COLUMNA_LISTADO,
+  DISTRIBUCION,
+  ENCABEZADO_LISTADO,
+} from "./distribucion";
+import { EstadoError, EstadoVacio } from "./EstadoVacio";
 import { FiltrosInspecciones } from "./FiltrosInspecciones";
-import { FormularioInspeccion } from "./FormularioInspeccion";
-import { TablaInspecciones } from "./TablaInspecciones";
+import {
+  FormularioInspeccion,
+  ID_CAMPO_PRODUCTO,
+} from "./FormularioInspeccion";
+import {
+  TablaInspecciones,
+  TablaInspeccionesEsqueleto,
+} from "./TablaInspecciones";
 import { TarjetasResumen } from "./TarjetasResumen";
 import { useInspecciones } from "./useInspecciones";
 import { useProductos } from "./useProductos";
@@ -67,7 +80,8 @@ export function PantallaInspecciones() {
   const [, iniciarTransicion] = useTransition();
 
   const productos = useProductos();
-  const { listado, filtrando, pendiente, recargar } = useInspecciones(filtros);
+  const { listado, fallo, pendiente, filtrando, recargar } =
+    useInspecciones(filtros);
   const { toast, mostrar } = useToast();
   const [idResaltado, setIdResaltado] = useState<string | null>(null);
 
@@ -109,9 +123,48 @@ export function PantallaInspecciones() {
     );
   }
 
+  // Mientras llegan los datos de otros filtros se queda lo anterior, atenuado.
+  const atenuado = unir(
+    "transition-opacity duration-200",
+    filtrando && "opacity-60",
+  );
+
+  let lista;
+  if (fallo) {
+    lista = <EstadoError reintentando={pendiente} onReintentar={recargar} />;
+  } else if (!listado) {
+    lista = <TablaInspeccionesEsqueleto />;
+  } else if (listado.inspecciones.length === 0) {
+    lista =
+      filtrosActivos.length > 0 ? (
+        <EstadoVacio
+          variante="sin-coincidencias"
+          onLimpiarFiltros={() => cambiarFiltros({})}
+        />
+      ) : (
+        <EstadoVacio
+          variante="sin-datos"
+          onIrAlFormulario={() =>
+            document.getElementById(ID_CAMPO_PRODUCTO)?.focus()
+          }
+        />
+      );
+  } else {
+    lista = (
+      <TablaInspecciones
+        inspecciones={listado.inspecciones}
+        idResaltado={idResaltado}
+        descripcion={[
+          "Inspecciones de la más reciente a la más antigua",
+          ...filtrosActivos,
+        ].join(", ")}
+      />
+    );
+  }
+
   return (
-    <div className="grid gap-6 lg:grid-cols-[360px_minmax(0,1fr)] lg:items-start">
-      <aside className="lg:sticky lg:top-6">
+    <div className={DISTRIBUCION}>
+      <aside className={COLUMNA_FORMULARIO}>
         <FormularioInspeccion
           productos={productos.productos}
           estadoProductos={productos.estado}
@@ -120,49 +173,31 @@ export function PantallaInspecciones() {
         />
       </aside>
 
-      <div className="flex min-w-0 flex-col gap-6">
-        {listado && (
-          <div
-            aria-busy={pendiente}
-            className={unir(
-              "transition-opacity duration-200",
-              filtrando && "opacity-60",
-            )}
-          >
+      <div className={COLUMNA_LISTADO}>
+        {/* Si falla la carga no hay totales que mostrar: el error va en la lista. */}
+        {!fallo && (
+          <div aria-busy={pendiente} className={atenuado}>
             <TarjetasResumen
-              resumen={listado.resumen}
+              resumen={listado?.resumen ?? null}
               filtrosActivos={filtrosActivos}
             />
           </div>
         )}
 
         <Panel aria-labelledby="titulo-listado">
-          <div className="flex flex-col gap-4 border-b border-borde p-4 sm:p-5">
-            <PanelTitulo id="titulo-listado">Registro de inspecciones</PanelTitulo>
+          <div className={ENCABEZADO_LISTADO}>
+            <PanelTitulo id="titulo-listado">
+              Registro de inspecciones
+            </PanelTitulo>
             <FiltrosInspecciones
               productos={productos.productos}
               filtros={filtros}
               onCambiar={cambiarFiltros}
             />
           </div>
-          {listado && (
-            <div
-              aria-busy={pendiente}
-              className={unir(
-                "transition-opacity duration-200",
-                filtrando && "opacity-60",
-              )}
-            >
-              <TablaInspecciones
-                inspecciones={listado.inspecciones}
-                idResaltado={idResaltado}
-                descripcion={[
-                  "Inspecciones de la más reciente a la más antigua",
-                  ...filtrosActivos,
-                ].join(", ")}
-              />
-            </div>
-          )}
+          <div aria-busy={pendiente} className={atenuado}>
+            {lista}
+          </div>
         </Panel>
       </div>
 

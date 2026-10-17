@@ -1,4 +1,5 @@
 import { ResultadoSello } from "@/components/ui/ResultadoSello";
+import { SkeletonTexto } from "@/components/ui/Skeleton";
 import { unir } from "@/components/ui/clases";
 import type { InspeccionClasificada } from "@/shared/inspeccion.types";
 import {
@@ -25,6 +26,57 @@ const COLUMNAS = [
 ];
 
 const CELDA = "border-b border-borde px-3 first:pl-5 last:pr-5";
+const TABLA = "w-full border-separate border-spacing-0 text-sm";
+const FILA = "[&:last-child>td]:border-b-0";
+const FILAS_ESQUELETO = 6;
+
+function Encabezado() {
+  return (
+    <thead>
+      <tr>
+        {COLUMNAS.map(({ titulo, numerica }) => (
+          <th
+            key={titulo}
+            scope="col"
+            className={unir(
+              CELDA,
+              // Encabezado fijo al desplazar la página.
+              "sticky top-0 z-10 bg-lamina py-2.5 text-etiqueta font-medium whitespace-nowrap text-niebla",
+              numerica ? "text-right" : "text-left",
+            )}
+          >
+            {titulo}
+          </th>
+        ))}
+      </tr>
+    </thead>
+  );
+}
+
+// Seis filas con la misma altura que las reales (línea de 20 px + py-3).
+export function TablaInspeccionesEsqueleto() {
+  return (
+    <table aria-hidden className={TABLA}>
+      <Encabezado />
+      <tbody>
+        {Array.from({ length: FILAS_ESQUELETO }, (_, fila) => (
+          <tr key={fila} className={FILA}>
+            {COLUMNAS.map(({ titulo, numerica }) => (
+              <td key={titulo} className={unir(CELDA, "py-3")}>
+                <SkeletonTexto
+                  className={unir(
+                    titulo === "Resultado" ? "h-4 w-28" : "w-14",
+                    numerica && "ml-auto",
+                  )}
+                />
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
 
 export function TablaInspecciones({
   inspecciones,
@@ -32,32 +84,15 @@ export function TablaInspecciones({
   descripcion,
 }: Props) {
   return (
-    <table className="w-full border-separate border-spacing-0 text-sm">
+    <table className={TABLA}>
       <caption className="sr-only">{descripcion}</caption>
-      <thead>
-        <tr>
-          {COLUMNAS.map(({ titulo, numerica }) => (
-            <th
-              key={titulo}
-              scope="col"
-              className={unir(
-                CELDA,
-                // Encabezado fijo al desplazar la página.
-                "sticky top-0 z-10 bg-lamina py-2.5 text-etiqueta font-medium whitespace-nowrap text-niebla",
-                numerica ? "text-right" : "text-left",
-              )}
-            >
-              {titulo}
-            </th>
-          ))}
-        </tr>
-      </thead>
+      <Encabezado />
       <tbody>
         {inspecciones.map((inspeccion) => (
           <tr
             key={inspeccion.id}
             className={unir(
-              "[&:last-child>td]:border-b-0",
+              FILA,
               inspeccion.id === idResaltado && "fila-nueva",
             )}
           >
@@ -83,7 +118,10 @@ export function TablaInspecciones({
               {formatearPorcentaje(inspeccion.porcentaje)}
             </td>
             <td className={unir(CELDA, "py-2.5")}>
-              <ResultadoSello resultado={inspeccion.resultado} />
+              {/* En bloque para que la fila mida lo mismo que el esqueleto. */}
+              <div className="flex">
+                <ResultadoSello resultado={inspeccion.resultado} />
+              </div>
             </td>
           </tr>
         ))}

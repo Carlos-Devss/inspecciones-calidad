@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { PantallaEsqueleto } from "@/features/inspecciones/PantallaEsqueleto";
 import { PantallaInspecciones } from "@/features/inspecciones/PantallaInspecciones";
 
 // Solo compone: encabezado y la pantalla interactiva. La pantalla va en
@@ -16,7 +17,7 @@ export default function Home() {
         </p>
       </header>
       <main>
-        <Suspense>
+        <Suspense fallback={<PantallaEsqueleto />}>
           <PantallaInspecciones />
         </Suspense>
       </main>
