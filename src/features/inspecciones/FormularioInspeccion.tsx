@@ -18,6 +18,7 @@ import type {
   Producto,
 } from "@/shared/inspeccion.types";
 import { crearInspeccion } from "./api-client";
+import { VistaPrevia } from "./VistaPrevia";
 
 // Orden visual de los campos: define a cuál se lleva el foco si hay errores.
 const CAMPOS = [
@@ -115,6 +116,17 @@ export function FormularioInspeccion({
   >({});
 
   const hoy = fechaDeHoy();
+
+  // La vista previa aparece en cuanto las dos cantidades son válidas,
+  // aunque el resto del formulario todavía tenga errores.
+  const erroresActuales = validar(valores).errores;
+  const cantidades =
+    erroresActuales.unidadesRevisadas || erroresActuales.unidadesDefectuosas
+      ? null
+      : {
+          revisadas: Number(valores.unidadesRevisadas),
+          defectuosas: Number(valores.unidadesDefectuosas),
+        };
 
   function registrar(campo: Campo) {
     return (elemento: HTMLInputElement | HTMLSelectElement | null) => {
@@ -319,6 +331,8 @@ export function FormularioInspeccion({
             />
           )}
         </Field>
+
+        <VistaPrevia cantidades={cantidades} />
 
         <Button type="submit" cargando={guardando} className="mt-1 w-full">
           {guardando ? "Guardando…" : "Guardar inspección"}
