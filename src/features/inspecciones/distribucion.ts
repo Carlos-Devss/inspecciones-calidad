@@ -22,7 +22,7 @@ export const ENCABEZADO_LISTADO =
 // ancho y el botón a la derecha. Menos de 640 px y desde 1024 px (columna
 // de 360 px), un campo por renglón.
 export const FORMULARIO_REJILLA =
-  "flex flex-col gap-4 sm:grid sm:grid-cols-6 sm:items-start lg:flex";
+  "flex flex-col gap-4 sm:grid sm:grid-cols-6 sm:items-start lg:flex lg:items-stretch";
 export const CAMPO_MEDIO = "sm:col-span-3";
 export const CAMPO_TERCIO = "sm:col-span-2";
 export const CAMPO_COMPLETO = "sm:col-span-6";
