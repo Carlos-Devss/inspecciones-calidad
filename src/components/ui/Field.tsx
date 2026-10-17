@@ -1,5 +1,6 @@
 import { CircleAlert } from "lucide-react";
 import type { ReactNode } from "react";
+import { unir } from "./clases";
 
 // Atributos que el campo le pasa a su control para enlazar etiqueta y error.
 export type PropsControl = {
@@ -12,14 +13,15 @@ type Props = {
   id: string;
   etiqueta: string;
   error?: string;
+  className?: string;
   // Recibe los atributos de accesibilidad y regresa el control (input, select...).
   children: (control: PropsControl) => ReactNode;
 };
 
-export function Field({ id, etiqueta, error, children }: Props) {
+export function Field({ id, etiqueta, error, className, children }: Props) {
   const idError = `${id}-error`;
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className={unir("flex flex-col gap-1.5", className)}>
       <label htmlFor={id} className="text-etiqueta font-medium text-grafito">
         {etiqueta}
       </label>

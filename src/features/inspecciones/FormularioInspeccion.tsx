@@ -2,6 +2,7 @@
 
 import { useRef, useState, type FormEvent } from "react";
 import { Banner } from "@/components/ui/Banner";
+import { unir } from "@/components/ui/clases";
 import { Button } from "@/components/ui/Button";
 import { Field, MensajeError } from "@/components/ui/Field";
 import { Input } from "@/components/ui/Input";
@@ -18,6 +19,13 @@ import type {
   Producto,
 } from "@/shared/inspeccion.types";
 import { crearInspeccion } from "./api-client";
+import {
+  BOTON_GUARDAR,
+  CAMPO_COMPLETO,
+  CAMPO_MEDIO,
+  CAMPO_TERCIO,
+  FORMULARIO_REJILLA,
+} from "./distribucion";
 import { VistaPrevia } from "./VistaPrevia";
 
 // Orden visual de los campos: define a cuál se lleva el foco si hay errores.
@@ -220,50 +228,61 @@ export function FormularioInspeccion({
     <Panel aria-labelledby="titulo-formulario" className="p-4 sm:p-5">
       <PanelTitulo id="titulo-formulario">Nueva inspección</PanelTitulo>
 
-      <form noValidate onSubmit={enviar} className="mt-4 flex flex-col gap-4">
-        {fallo && <Banner>{fallo}</Banner>}
+      <form
+        noValidate
+        onSubmit={enviar}
+        className={unir("mt-4", FORMULARIO_REJILLA)}
+      >
+        {fallo && <Banner className={CAMPO_COMPLETO}>{fallo}</Banner>}
+
+        <div className={unir("flex flex-col gap-2", CAMPO_MEDIO)}>
+          <Field
+            id={ID_CAMPO_PRODUCTO}
+            etiqueta="Producto"
+            error={errores.productoCodigo}
+          >
+            {(control) => (
+              <Select
+                {...control}
+                ref={registrar("productoCodigo")}
+                value={valores.productoCodigo}
+                onChange={(e) => cambiar("productoCodigo", e.target.value)}
+                onBlur={() => salir("productoCodigo")}
+                disabled={estadoProductos === "cargando"}
+              >
+                <option value="">
+                  {estadoProductos === "cargando"
+                    ? "Cargando productos…"
+                    : "Selecciona un producto"}
+                </option>
+                {productos.map((producto) => (
+                  <option key={producto.codigo} value={producto.codigo}>
+                    {producto.codigo} {producto.nombre}
+                  </option>
+                ))}
+              </Select>
+            )}
+          </Field>
+          {estadoProductos === "error" && (
+            <div className="flex flex-wrap items-center gap-x-2">
+              <MensajeError>No se pudieron cargar los productos.</MensajeError>
+              <Button
+                variante="sutil"
+                className="h-10 underline underline-offset-4 md:h-8"
+                onClick={onReintentarProductos}
+              >
+                Reintentar
+              </Button>
+            </div>
+          )}
+        </div>
 
         <Field
-          id={ID_CAMPO_PRODUCTO}
-          etiqueta="Producto"
-          error={errores.productoCodigo}
+          id="inspeccion-lote"
+          etiqueta="Lote"
+          error={errores.lote}
+          className={CAMPO_MEDIO}
         >
-          {(control) => (
-            <Select
-              {...control}
-              ref={registrar("productoCodigo")}
-              value={valores.productoCodigo}
-              onChange={(e) => cambiar("productoCodigo", e.target.value)}
-              onBlur={() => salir("productoCodigo")}
-              disabled={estadoProductos === "cargando"}
-            >
-              <option value="">
-                {estadoProductos === "cargando"
-                  ? "Cargando productos…"
-                  : "Selecciona un producto"}
-              </option>
-              {productos.map((producto) => (
-                <option key={producto.codigo} value={producto.codigo}>
-                  {producto.codigo} {producto.nombre}
-                </option>
-              ))}
-            </Select>
-          )}
-        </Field>
-        {estadoProductos === "error" && (
-          <div className="-mt-2 flex flex-wrap items-center gap-x-2">
-            <MensajeError>No se pudieron cargar los productos.</MensajeError>
-            <Button
-              variante="sutil"
-              className="h-10 underline underline-offset-4 md:h-8"
-              onClick={onReintentarProductos}
-            >
-              Reintentar
-            </Button>
-          </div>
-        )}
-
-        <Field id="inspeccion-lote" etiqueta="Lote" error={errores.lote}>
           {(control) => (
             <Input
               {...control}
@@ -278,7 +297,12 @@ export function FormularioInspeccion({
           )}
         </Field>
 
-        <Field id="inspeccion-fecha" etiqueta="Fecha" error={errores.fecha}>
+        <Field
+          id="inspeccion-fecha"
+          etiqueta="Fecha"
+          error={errores.fecha}
+          className={CAMPO_TERCIO}
+        >
           {(control) => (
             <Input
               {...control}
@@ -298,6 +322,7 @@ export function FormularioInspeccion({
           id="inspeccion-revisadas"
           etiqueta="Unidades revisadas"
           error={errores.unidadesRevisadas}
+          className={CAMPO_TERCIO}
         >
           {(control) => (
             <Input
@@ -317,6 +342,7 @@ export function FormularioInspeccion({
           id="inspeccion-defectuosas"
           etiqueta="Unidades defectuosas"
           error={errores.unidadesDefectuosas}
+          className={CAMPO_TERCIO}
         >
           {(control) => (
             <Input
@@ -332,9 +358,11 @@ export function FormularioInspeccion({
           )}
         </Field>
 
-        <VistaPrevia cantidades={cantidades} />
+        <div className={CAMPO_COMPLETO}>
+          <VistaPrevia cantidades={cantidades} />
+        </div>
 
-        <Button type="submit" cargando={guardando} className="mt-1 w-full">
+        <Button type="submit" cargando={guardando} className={BOTON_GUARDAR}>
           {guardando ? "Guardando…" : "Guardar inspección"}
         </Button>
       </form>
