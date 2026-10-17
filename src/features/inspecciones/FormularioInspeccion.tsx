@@ -255,7 +255,7 @@ export function FormularioInspeccion({
             <MensajeError>No se pudieron cargar los productos.</MensajeError>
             <Button
               variante="sutil"
-              className="h-8 underline underline-offset-4"
+              className="h-10 underline underline-offset-4 md:h-8"
               onClick={onReintentarProductos}
             >
               Reintentar

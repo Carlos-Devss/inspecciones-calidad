@@ -37,7 +37,7 @@ export function SegmentedControl<T extends string>({
           <label
             key={opcion.valor}
             className={unir(
-              "flex min-h-10 cursor-pointer items-center justify-center rounded-sm px-2 py-1 text-center text-sm leading-tight font-medium text-niebla sm:min-h-8 sm:px-3",
+              "flex min-h-10 cursor-pointer items-center justify-center rounded-sm px-2 py-1 text-center text-sm leading-tight font-medium text-niebla md:min-h-8 sm:px-3",
               "hover:text-grafito has-checked:bg-grafito has-checked:text-lamina",
               "has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-grafito",
             )}
