@@ -10,7 +10,7 @@ Pantalla para registrar inspecciones de calidad (producto, lote, fecha, unidades
 - `src/shared/` — esquemas Zod y tipos que usan cliente y servidor. Un solo esquema valida el formulario y la API.
 - `src/features/inspecciones/` — componentes y hooks de la pantalla.
 - `src/components/ui/` — componentes visuales reutilizables sin lógica de negocio.
-- `db/migrations/` y `db/seeds/` — SQL numerado; `scripts/migrate.mjs` los aplica en orden.
+- `db/` — SQL numerado. `db/migrations/` tiene las migraciones (incluye el catálogo de productos); `npm run db:migrate` (`scripts/migrate.mjs`) aplica en orden las pendientes y las registra en `schema_migrations`. `db/seeds/` tiene datos de demostración; `npm run db:seed` (`scripts/seed.mjs`) los inserta solo si `inspecciones` está vacía.
 
 ## Decisiones
 - El resultado y los porcentajes NO se guardan en la BD: se calculan al leer con `src/domain/`. Así un cambio de límite reclasifica todo.
