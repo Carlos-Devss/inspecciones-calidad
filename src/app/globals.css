@@ -1,1 +1,99 @@
 @import "tailwindcss";
+
+/*
+ * Sistema visual. El color solo significa resultado: toda la interfaz es
+ * neutra y los únicos colores son los tres estados de una inspección.
+ * Se borran los colores de Tailwind para que solo existan estos tokens.
+ */
+@theme {
+  --color-*: initial;
+  --color-acero: #eef1f4; /* fondo de página */
+  --color-lamina: #ffffff; /* superficie de paneles */
+  --color-grafito: #1c2430; /* texto principal y botón primario */
+  --color-niebla: #5b6573; /* texto secundario */
+  --color-borde: #d5dbe2;
+
+  --color-aprobado: #17663f;
+  --color-aprobado-fondo: #e3f2ea;
+  --color-observaciones: #8a5300;
+  --color-observaciones-fondo: #fbefd9;
+  --color-rechazado: #a61b1b;
+  --color-rechazado-fondo: #fbe4e2;
+
+  --radius-control: 6px;
+  --radius-panel: 10px;
+
+  --text-etiqueta: 0.8125rem; /* 13px */
+  --text-etiqueta--line-height: 1.25rem;
+  --text-cuerpo: 0.9375rem; /* 15px */
+  --text-cuerpo--line-height: 1.5rem;
+
+  --animate-toast-entra: toast-entra 200ms ease-out both;
+  --animate-toast-sale: toast-sale 200ms ease-in both;
+}
+
+@theme inline {
+  --font-sans: var(--font-plex), ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-acero);
+    color: var(--color-grafito);
+    /* Todas las cifras con el mismo ancho para que las columnas se alineen. */
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Foco visible y consistente en todo lo interactivo. */
+  :focus-visible {
+    outline: 2px solid var(--color-grafito);
+    outline-offset: 2px;
+  }
+}
+
+@keyframes toast-entra {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes toast-sale {
+  to {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* Fila recién guardada: fondo tenue que se desvanece en 1.5 s. */
+@keyframes resaltar {
+  from {
+    background-color: var(--color-acero);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+.fila-nueva {
+  animation: resaltar 1.5s ease-out both;
+}
+
+/*
+ * Movimiento reducido: todo es instantáneo. La fila nueva conserva un fondo
+ * fijo (sin desvanecerse) mientras dura el resaltado, para no perder el aviso.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0s !important;
+  }
+
+  .fila-nueva {
+    animation: none !important;
+    background-color: var(--color-acero);
+  }
+}
