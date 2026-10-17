@@ -15,25 +15,45 @@ type Props = {
   descripcion: string;
 };
 
-const COLUMNAS = [
+// La forma depende del ancho del panel (container queries), no de la
+// ventana: con el formulario a un lado, el panel de una laptop mide menos
+// que la ventana. Nunca hay scroll horizontal.
+//   ≥ 820 px  tabla completa
+//   560–819   tabla compacta: código bajo el nombre, lote bajo la fecha
+//             y una sola columna "Defectuosas / revisadas"
+//   < 560     tarjetas, una por inspección
+const TABLA_VISIBLE = "hidden @min-[35rem]:table";
+const TARJETAS_VISIBLES =
+  "grid gap-3 p-4 @min-[35rem]:hidden";
+const SOLO_COMPLETA = "hidden @min-[51.25rem]:table-cell";
+const SOLO_COMPACTA = "@min-[51.25rem]:hidden";
+
+type Columna = {
+  titulo: string;
+  numerica?: boolean;
+  modo?: "completa" | "compacta";
+};
+
+const COLUMNAS: Columna[] = [
   { titulo: "Fecha" },
   { titulo: "Producto" },
-  { titulo: "Lote" },
-  { titulo: "Revisadas", numerica: true },
-  { titulo: "Defectuosas", numerica: true },
+  { titulo: "Lote", modo: "completa" },
+  { titulo: "Revisadas", numerica: true, modo: "completa" },
+  { titulo: "Defectuosas", numerica: true, modo: "completa" },
+  { titulo: "Defectuosas / revisadas", numerica: true, modo: "compacta" },
   { titulo: "% defectos", numerica: true },
   { titulo: "Resultado" },
 ];
 
-// Tabla o tarjetas según el ancho del panel, no de la ventana: la tabla
-// necesita ~820 px y entre 768 y 1279 px de ventana el panel mide menos
-// (la columna derecha a 1024 px mide ~590 px). Así nunca hay scroll
-// horizontal. En móvil (<768 px) siempre son tarjetas.
-const SOLO_TABLA = "hidden @min-[52rem]:table";
-const SOLO_TARJETAS =
-  "grid gap-3 p-4 @min-[40rem]:grid-cols-2 @min-[52rem]:hidden";
+function claseModo(modo: Columna["modo"]) {
+  if (modo === "completa") return SOLO_COMPLETA;
+  if (modo === "compacta") return SOLO_COMPACTA;
+  return undefined;
+}
 
-const CELDA = "border-b border-borde px-2.5 first:pl-5 last:pr-5";
+// La compacta usa menos aire entre columnas para caber en 560 px.
+const CELDA =
+  "border-b border-borde px-2 first:pl-5 last:pr-5 @min-[51.25rem]:px-2.5 @min-[51.25rem]:first:pl-5 @min-[51.25rem]:last:pr-5";
 const TABLA = "w-full border-separate border-spacing-0 text-sm";
 const FILA = "[&:last-child>td]:border-b-0";
 const TARJETA = "rounded-panel border border-borde p-4";
@@ -46,7 +66,7 @@ export function TablaInspecciones({
 }: Props) {
   return (
     <div className="@container">
-      <table className={unir(TABLA, SOLO_TABLA)}>
+      <table className={unir(TABLA, TABLA_VISIBLE)}>
         <caption className="sr-only">{descripcion}</caption>
         <Encabezado />
         <tbody>
@@ -59,24 +79,45 @@ export function TablaInspecciones({
               )}
             >
               <td className={unir(CELDA, "py-3 whitespace-nowrap")}>
-                <time dateTime={inspeccion.fecha}>
+                <time dateTime={inspeccion.fecha} className="block">
                   {formatearFecha(inspeccion.fecha)}
                 </time>
+                {/* En la compacta el lote va debajo, como texto secundario. */}
+                <span className="block text-etiqueta text-niebla @min-[51.25rem]:hidden">
+                  {inspeccion.lote}
+                </span>
               </td>
-              <td className={unir(CELDA, "py-3")}>
+              {/* El nombre no se parte salvo en lo más angosto de la compacta. */}
+              <td
+                className={unir(
+                  CELDA,
+                  "py-3 whitespace-nowrap @max-[36rem]:whitespace-normal",
+                )}
+              >
                 {inspeccion.productoNombre}
-                <span className="ml-1.5 text-etiqueta text-niebla">
+                {/* En la compacta el código va debajo, como texto secundario. */}
+                <span className="block text-etiqueta text-niebla @min-[51.25rem]:ml-1.5 @min-[51.25rem]:inline">
                   {inspeccion.productoCodigo}
                 </span>
               </td>
-              <td className={unir(CELDA, "py-3 break-all")}>
+              <td className={unir(CELDA, SOLO_COMPLETA, "py-3 break-all")}>
                 {inspeccion.lote}
               </td>
-              <td className={unir(CELDA, "py-3 text-right")}>
+              <td className={unir(CELDA, SOLO_COMPLETA, "py-3 text-right")}>
                 {formatearEntero(inspeccion.unidadesRevisadas)}
               </td>
-              <td className={unir(CELDA, "py-3 text-right")}>
+              <td className={unir(CELDA, SOLO_COMPLETA, "py-3 text-right")}>
                 {formatearEntero(inspeccion.unidadesDefectuosas)}
+              </td>
+              <td
+                className={unir(
+                  CELDA,
+                  SOLO_COMPACTA,
+                  "py-3 text-right whitespace-nowrap",
+                )}
+              >
+                {formatearEntero(inspeccion.unidadesDefectuosas)} /{" "}
+                {formatearEntero(inspeccion.unidadesRevisadas)}
               </td>
               <td className={unir(CELDA, "py-3 text-right")}>
                 {formatearPorcentaje(inspeccion.porcentaje)}
@@ -92,7 +133,7 @@ export function TablaInspecciones({
         </tbody>
       </table>
 
-      <ul aria-label={descripcion} className={SOLO_TARJETAS}>
+      <ul aria-label={descripcion} className={TARJETAS_VISIBLES}>
         {inspecciones.map((inspeccion) => (
           <li
             key={inspeccion.id}
@@ -113,18 +154,29 @@ function Encabezado() {
   return (
     <thead>
       <tr>
-        {COLUMNAS.map(({ titulo, numerica }) => (
+        {COLUMNAS.map(({ titulo, numerica, modo }) => (
           <th
             key={titulo}
             scope="col"
             className={unir(
               CELDA,
+              claseModo(modo),
               // Encabezado fijo al desplazar la página.
-              "sticky top-0 z-10 bg-lamina py-2.5 text-etiqueta font-medium whitespace-nowrap text-niebla",
+              "sticky top-0 z-10 bg-lamina py-2.5 align-bottom text-etiqueta font-medium text-niebla @min-[51.25rem]:whitespace-nowrap",
               numerica ? "text-right" : "text-left",
+              titulo === "% defectos" && "whitespace-nowrap",
+              // El sello no se parte: la columna mide lo justo y el espacio
+              // sobrante se queda para el nombre del producto.
+              titulo === "Resultado" && "w-px",
             )}
           >
             {titulo}
+            {titulo === "Fecha" && (
+              <span className="whitespace-nowrap @min-[51.25rem]:hidden">
+                {" "}
+                / lote
+              </span>
+            )}
           </th>
         ))}
       </tr>
@@ -172,24 +224,34 @@ function TarjetaInspeccion({
   );
 }
 
-// Seis filas (o tarjetas) con la misma altura que las reales.
+// Seis filas (o tarjetas) con la misma altura que las reales en cada modo.
 export function TablaInspeccionesEsqueleto() {
   const filas = Array.from({ length: FILAS_ESQUELETO }, (_, i) => i);
   return (
     <div aria-hidden className="@container">
-      <table className={unir(TABLA, SOLO_TABLA)}>
+      <table className={unir(TABLA, TABLA_VISIBLE)}>
         <Encabezado />
         <tbody>
           {filas.map((fila) => (
             <tr key={fila} className={FILA}>
-              {COLUMNAS.map(({ titulo, numerica }) => (
-                <td key={titulo} className={unir(CELDA, "py-3")}>
+              {COLUMNAS.map(({ titulo, numerica, modo }) => (
+                <td
+                  key={titulo}
+                  className={unir(CELDA, claseModo(modo), "py-3")}
+                >
                   <SkeletonTexto
                     className={unir(
                       titulo === "Resultado" ? "h-4 w-28" : "w-14",
                       numerica && "ml-auto",
                     )}
                   />
+                  {/* Código y lote ocupan una segunda línea en la compacta. */}
+                  {(titulo === "Producto" || titulo === "Fecha") && (
+                    <SkeletonTexto
+                      alto="h-5 @min-[51.25rem]:hidden"
+                      className="w-10"
+                    />
+                  )}
                 </td>
               ))}
             </tr>
@@ -197,7 +259,7 @@ export function TablaInspeccionesEsqueleto() {
         </tbody>
       </table>
 
-      <div className={SOLO_TARJETAS}>
+      <div className={TARJETAS_VISIBLES}>
         {filas.map((fila) => (
           <div key={fila} className={TARJETA}>
             <div className="flex items-center justify-between gap-2">
