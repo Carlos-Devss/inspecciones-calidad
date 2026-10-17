@@ -4,6 +4,7 @@ import {
   clasificarInspeccion,
   LIMITE_APROBADO,
   LIMITE_OBSERVACIONES,
+  type Resultado,
 } from "@/domain/clasificacion";
 import { formatearPorcentaje } from "./formato";
 
@@ -16,6 +17,35 @@ const MAXIMO_ESCALA = Math.max(15, Math.ceil(LIMITE_OBSERVACIONES * 1.5));
 function posicion(porcentaje: number): number {
   return (Math.min(porcentaje, MAXIMO_ESCALA) / MAXIMO_ESCALA) * 100;
 }
+
+// Tramos del medidor, calculados desde los límites del dominio.
+const ZONAS: {
+  resultado: Resultado;
+  corto?: string;
+  desde: number;
+  hasta: number;
+  color: string;
+}[] = [
+  {
+    resultado: "Aprobado",
+    desde: 0,
+    hasta: LIMITE_APROBADO,
+    color: "text-aprobado",
+  },
+  {
+    resultado: "Con observaciones",
+    corto: "Obs.",
+    desde: LIMITE_APROBADO,
+    hasta: LIMITE_OBSERVACIONES,
+    color: "text-observaciones",
+  },
+  {
+    resultado: "Rechazado",
+    desde: LIMITE_OBSERVACIONES,
+    hasta: MAXIMO_ESCALA,
+    color: "text-rechazado",
+  },
+];
 
 type Props = {
   // Solo llega cuando las dos cantidades son válidas.
@@ -76,6 +106,37 @@ function MedidorTolerancia({ porcentaje }: { porcentaje: number | null }) {
       }
       className="mt-4"
     >
+      {/* Nombre de cada zona, centrado en su tramo. Cada tramo es un
+          contenedor: si "Con observaciones" no cabe, se abrevia a "Obs.". */}
+      <div aria-hidden className="relative mx-2 mb-1 h-4">
+        {ZONAS.map(({ resultado, corto, desde, hasta, color }) => (
+          <div
+            key={resultado}
+            className="@container absolute inset-y-0 flex justify-center"
+            style={{
+              left: `${posicion(desde)}%`,
+              width: `${posicion(hasta) - posicion(desde)}%`,
+            }}
+          >
+            <span
+              className={unir(
+                "text-xs leading-4 font-medium whitespace-nowrap",
+                color,
+              )}
+            >
+              {corto ? (
+                <>
+                  <span className="hidden @min-[7rem]:inline">{resultado}</span>
+                  <span className="@min-[7rem]:hidden">{corto}</span>
+                </>
+              ) : (
+                resultado
+              )}
+            </span>
+          </div>
+        ))}
+      </div>
+
       {/* El margen horizontal deja espacio a la aguja en los extremos y el
           overflow evita que la capa desplazada cree scroll horizontal. */}
       <div className="overflow-hidden px-2 py-1.5">
@@ -98,7 +159,7 @@ function MedidorTolerancia({ porcentaje }: { porcentaje: number | null }) {
             <div
               key={limite}
               aria-hidden
-              className="absolute -inset-y-1 w-px -translate-x-1/2 bg-niebla"
+              className="absolute inset-y-0 w-px -translate-x-1/2 bg-niebla"
               style={{ left: `${posicion(limite)}%` }}
             />
           ))}
