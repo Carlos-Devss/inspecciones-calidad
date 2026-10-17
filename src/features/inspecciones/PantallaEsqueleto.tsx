@@ -58,9 +58,9 @@ export function PantallaEsqueleto() {
         <Panel>
           <div className={ENCABEZADO_LISTADO}>
             <PanelTitulo>Registro de inspecciones</PanelTitulo>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-              <Skeleton className="h-[66px] sm:w-60" />
-              <Skeleton className="h-[116px] sm:h-[62px] sm:w-[410px]" />
+            <div className="flex flex-col gap-4 md:flex-row md:items-end">
+              <Skeleton className="h-[66px] md:w-60" />
+              <Skeleton className="h-[116px] sm:h-[72px] md:h-[66px] md:w-[400px]" />
             </div>
           </div>
           <TablaInspeccionesEsqueleto />

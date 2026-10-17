@@ -27,8 +27,8 @@ export function FiltrosInspecciones({ productos, filtros, onCambiar }: Props) {
     !productos.some((producto) => producto.codigo === filtros.producto);
 
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
-      <div className="sm:w-60">
+    <div className="flex flex-col gap-4 md:flex-row md:flex-wrap md:items-end">
+      <div className="md:w-60">
         <Field id="filtro-producto" etiqueta="Producto">
           {(control) => (
             <Select
@@ -53,7 +53,7 @@ export function FiltrosInspecciones({ productos, filtros, onCambiar }: Props) {
       </div>
 
       <SegmentedControl
-        leyenda="Resultado"
+        etiqueta="Resultado"
         nombre="filtro-resultado"
         opciones={OPCIONES_RESULTADO}
         valor={filtros.resultado ?? ""}
@@ -68,7 +68,7 @@ export function FiltrosInspecciones({ productos, filtros, onCambiar }: Props) {
       {hayFiltros && (
         <Button
           variante="sutil"
-          className="self-start sm:self-auto"
+          className="self-start md:self-auto"
           onClick={() => onCambiar({})}
         >
           Limpiar filtros
