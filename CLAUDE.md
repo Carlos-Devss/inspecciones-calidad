@@ -31,6 +31,14 @@ Pantalla para registrar inspecciones de calidad (producto, lote, fecha, unidades
 - La API de listado regresa la lista filtrada y su resumen en la misma respuesta, para que tabla y tarjetas siempre coincidan.
 - Los límites de clasificación viven en constantes en `src/domain/clasificacion.ts`.
 
+## Diseño
+- El color solo significa resultado: toda la interfaz es neutra (incluidos errores, banners y toast); el color vive solo en `ResultadoSello` y en los tramos del medidor, siempre con icono y texto.
+- Tokens en `@theme` de `globals.css` (los colores de Tailwind están borrados): acero, lamina, grafito, niebla, borde y aprobado/observaciones/rechazado con su `-fondo`. Nada de colores sueltos; contorno de controles = `niebla/75` (3:1).
+- Tipografía: IBM Plex Sans 400/500/600; título 24/600, panel 16/600, cuerpo 14–15/400, etiquetas 13/500 (`text-etiqueta`). Cifras con `tabular-nums` (global en `body`). Sin mayúsculas sostenidas ni monoespaciada.
+- Forma: bordes de 1px, `rounded-control` (6px) y `rounded-panel` (10px), sin sombras salvo el toast; espaciado en múltiplos de 4; foco = anillo grafito de 2px con separación.
+- Movimiento solo como respuesta a una acción (medidor, color del sello, toast, fila nueva, opacidad al filtrar), 200 ms; nada se anima al cargar. Con `prefers-reduced-motion` todo es instantáneo.
+- Sin scroll horizontal de 320 a 1920px: la lista cambia de tabla a tarjetas por ancho del contenedor, no del viewport. Áreas táctiles ≥40px en móvil.
+
 ## Reglas de trabajo
 - El código se escribe con asistencia de IA; Carlos revisa y aprueba cada paso. No modifiques `src/domain/` salvo que él lo pida explícitamente.
 - Commits pequeños, uno por cambio lógico, en español con prefijo convencional (feat, fix, chore, docs, test, refactor). Nunca squash, amend ni force push.
