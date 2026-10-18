@@ -44,10 +44,18 @@ Pantalla para registrar inspecciones de calidad (producto, lote, fecha, unidades
 - Movimiento solo como respuesta a una acción (medidor, color del sello, toast, fila nueva, opacidad al filtrar), 200 ms; nada se anima al cargar. Con `prefers-reduced-motion` todo es instantáneo.
 - Sin scroll horizontal de 320 a 1920px: la lista cambia de tabla a tarjetas por ancho del contenedor, no del viewport. Áreas táctiles ≥40px en móvil.
 
+## Scripts
+
+- `npm run lint`, `npm test`, `npm run build` — lint, pruebas (Vitest) y build.
+- `npm run format` aplica Prettier; `npm run format:check` solo verifica (lo corre CI).
+- `npm run typecheck` — `tsc --noEmit`.
+- CI (`.github/workflows/ci.yml`) corre en cada PR hacia `main` y en push a `main`: lint, format:check, typecheck, test y build. Node sale de `.nvmrc`.
+
 ## Reglas de trabajo
 
 - El código se escribe con asistencia de IA; Carlos revisa y aprueba cada paso. No modifiques `src/domain/` salvo que él lo pida explícitamente.
-- Commits pequeños, uno por cambio lógico, en español con prefijo convencional (feat, fix, chore, docs, test, refactor). Nunca squash, amend ni force push.
+- Todo cambio va en una rama con Pull Request y CI en verde; nunca push directo a main.
+- Commits pequeños, uno por cambio lógico, en español con prefijo convencional (feat, fix, chore, docs, test, refactor, style, ci). Nunca squash, amend ni force push.
 - No toques la configuración de git (user.name, user.email, remotes).
 - Nunca subas secretos: solo `.env.example`.
 - Fuera de alcance: edición, borrado, autenticación e integración con otros módulos.
