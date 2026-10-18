@@ -24,20 +24,16 @@ export const MENSAJES = {
   fechaFormato: "La fecha debe tener el formato AAAA-MM-DD.",
   fechaInexistente: "La fecha no existe en el calendario.",
   fechaFutura: "La fecha no puede ser futura.",
-  revisadasObligatorias:
-    "Las unidades revisadas son obligatorias y deben ser un número.",
+  revisadasObligatorias: "Las unidades revisadas son obligatorias y deben ser un número.",
   revisadasEnteras: "Las unidades revisadas deben ser un número entero.",
   revisadasMayorQueCero: "Las unidades revisadas deben ser mayores que cero.",
-  defectuosasObligatorias:
-    "Las unidades defectuosas son obligatorias y deben ser un número.",
+  defectuosasObligatorias: "Las unidades defectuosas son obligatorias y deben ser un número.",
   defectuosasEnteras: "Las unidades defectuosas deben ser un número entero.",
   defectuosasNegativas: "Las unidades defectuosas no pueden ser negativas.",
-  defectuosasMayoresQueRevisadas:
-    "Las unidades defectuosas no pueden ser más que las revisadas.",
+  defectuosasMayoresQueRevisadas: "Las unidades defectuosas no pueden ser más que las revisadas.",
   unidadesMuyGrandes: "La cantidad es demasiado grande.",
   productoFiltroInvalido: "El código de producto del filtro no es válido.",
-  resultadoFiltroInvalido:
-    "El resultado debe ser Aprobado, Con observaciones o Rechazado.",
+  resultadoFiltroInvalido: "El resultado debe ser Aprobado, Con observaciones o Rechazado.",
 } as const;
 
 // Fecha de hoy como texto YYYY-MM-DD en la zona horaria del negocio.
@@ -57,9 +53,7 @@ function esFechaReal(texto: string): boolean {
   const [anio, mes, dia] = texto.split("-").map(Number);
   const fecha = new Date(Date.UTC(anio, mes - 1, dia));
   return (
-    fecha.getUTCFullYear() === anio &&
-    fecha.getUTCMonth() === mes - 1 &&
-    fecha.getUTCDate() === dia
+    fecha.getUTCFullYear() === anio && fecha.getUTCMonth() === mes - 1 && fecha.getUTCDate() === dia
   );
 }
 
@@ -115,12 +109,10 @@ export const crearInspeccionSchema = z
     // Corre aunque otros campos (lote, fecha...) tengan errores, siempre que
     // las dos cantidades sean válidas; así el usuario ve todos los errores juntos.
     when: (payload) =>
-      unidadesRevisadas.safeParse(
-        (payload.value as Record<string, unknown>)?.unidadesRevisadas,
-      ).success &&
-      unidadesDefectuosas.safeParse(
-        (payload.value as Record<string, unknown>)?.unidadesDefectuosas,
-      ).success,
+      unidadesRevisadas.safeParse((payload.value as Record<string, unknown>)?.unidadesRevisadas)
+        .success &&
+      unidadesDefectuosas.safeParse((payload.value as Record<string, unknown>)?.unidadesDefectuosas)
+        .success,
   });
 
 // Filtros del GET. Todo llega como texto en la URL.
@@ -131,9 +123,7 @@ export const filtrosSchema = z.object({
     .min(1, { error: MENSAJES.productoFiltroInvalido })
     .max(10, { error: MENSAJES.productoFiltroInvalido })
     .optional(),
-  resultado: z
-    .enum(RESULTADOS, { error: MENSAJES.resultadoFiltroInvalido })
-    .optional(),
+  resultado: z.enum(RESULTADOS, { error: MENSAJES.resultadoFiltroInvalido }).optional(),
 });
 
 export type CrearInspeccionEntrada = z.input<typeof crearInspeccionSchema>;

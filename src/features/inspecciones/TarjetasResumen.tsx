@@ -41,9 +41,7 @@ export function TarjetasResumen({ listado, filtrosActivos }: Props) {
           esqueleto y no empuja las tarjetas cuando llegan los datos. Deja
           claro que los totales son del conjunto filtrado. */}
       {filtrosActivos.length > 0 && (
-        <p className="mb-3 text-sm text-niebla">
-          Mostrando: {filtrosActivos.join(", ")}
-        </p>
+        <p className="mb-3 text-sm text-niebla">Mostrando: {filtrosActivos.join(", ")}</p>
       )}
       {listado ? <Totales listado={listado} /> : <TotalesEsqueleto />}
     </section>
@@ -68,11 +66,7 @@ function Totales({ listado }: { listado: ListadoInspecciones }) {
       >
         {formatearEntero(resumen.totalRevisadas)}
       </Tarjeta>
-      <Tarjeta
-        etiqueta="Defectos globales"
-        detalle="Defectuosas ÷ revisadas"
-        secundario={sinDatos}
-      >
+      <Tarjeta etiqueta="Defectos globales" detalle="Defectuosas ÷ revisadas" secundario={sinDatos}>
         {formatearPorcentaje(resumen.porcentajeGlobal)}
       </Tarjeta>
     </dl>
@@ -93,9 +87,7 @@ function Tarjeta({
 }) {
   return (
     <div className={ELEMENTO}>
-      <dt className={unir(ETIQUETA, "text-etiqueta font-medium text-niebla")}>
-        {etiqueta}
-      </dt>
+      <dt className={unir(ETIQUETA, "text-etiqueta font-medium text-niebla")}>{etiqueta}</dt>
       <dd
         className={unir(
           VALOR,
@@ -139,10 +131,7 @@ function TotalesEsqueleto() {
             {indice === 0 && (
               <>
                 <SkeletonTexto alto="hidden h-5 sm:flex" className="w-24" />
-                <SkeletonTexto
-                  alto="hidden h-5 sm:flex @min-[13rem]:hidden"
-                  className="w-20"
-                />
+                <SkeletonTexto alto="hidden h-5 sm:flex @min-[13rem]:hidden" className="w-20" />
               </>
             )}
           </div>

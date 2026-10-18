@@ -11,10 +11,7 @@ type Props = SelectHTMLAttributes<HTMLSelectElement> & {
 export function Select({ className, children, ...resto }: Props) {
   return (
     <div className={unir("relative", className)}>
-      <select
-        className={unir(ESTILO_CONTROL, "cursor-pointer appearance-none pr-9")}
-        {...resto}
-      >
+      <select className={unir(ESTILO_CONTROL, "cursor-pointer appearance-none pr-9")} {...resto}>
         {children}
       </select>
       <ChevronDown

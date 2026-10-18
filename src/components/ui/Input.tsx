@@ -20,10 +20,5 @@ const SIN_APARIENCIA_NATIVA = unir(
 );
 
 export function Input({ className, ...resto }: Props) {
-  return (
-    <input
-      className={unir(ESTILO_CONTROL, SIN_APARIENCIA_NATIVA, className)}
-      {...resto}
-    />
-  );
+  return <input className={unir(ESTILO_CONTROL, SIN_APARIENCIA_NATIVA, className)} {...resto} />;
 }

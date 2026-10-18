@@ -102,9 +102,9 @@ describe("crearInspeccionSchema", () => {
     { caso: "revisadas negativas", valor: -5, mensaje: MENSAJES.revisadasMayorQueCero },
     { caso: "revisadas decimales", valor: 10.5, mensaje: MENSAJES.revisadasEnteras },
   ])("rechaza $caso", ({ valor, mensaje }) => {
-    expect(
-      errores({ ...valida, unidadesRevisadas: valor, unidadesDefectuosas: 0 }),
-    ).toEqual({ unidadesRevisadas: mensaje });
+    expect(errores({ ...valida, unidadesRevisadas: valor, unidadesDefectuosas: 0 })).toEqual({
+      unidadesRevisadas: mensaje,
+    });
   });
 
   it.each([
@@ -117,9 +117,9 @@ describe("crearInspeccionSchema", () => {
   });
 
   it("rechaza defectuosas mayores que revisadas, con el error en unidadesDefectuosas", () => {
-    expect(
-      errores({ ...valida, unidadesRevisadas: 10, unidadesDefectuosas: 11 }),
-    ).toEqual({ unidadesDefectuosas: MENSAJES.defectuosasMayoresQueRevisadas });
+    expect(errores({ ...valida, unidadesRevisadas: 10, unidadesDefectuosas: 11 })).toEqual({
+      unidadesDefectuosas: MENSAJES.defectuosasMayoresQueRevisadas,
+    });
   });
 
   it("muestra la regla cruzada junto con errores de otros campos", () => {
@@ -144,14 +144,13 @@ describe("crearInspeccionSchema", () => {
 describe("filtrosSchema", () => {
   it("acepta filtros vacíos, por producto y por resultado", () => {
     expect(filtrosSchema.parse({})).toEqual({});
-    expect(
-      filtrosSchema.parse({ producto: "P001", resultado: "Con observaciones" }),
-    ).toEqual({ producto: "P001", resultado: "Con observaciones" });
+    expect(filtrosSchema.parse({ producto: "P001", resultado: "Con observaciones" })).toEqual({
+      producto: "P001",
+      resultado: "Con observaciones",
+    });
   });
 
   it("rechaza un resultado que no existe", () => {
-    expect(filtrosSchema.safeParse({ resultado: "Inventado" }).success).toBe(
-      false,
-    );
+    expect(filtrosSchema.safeParse({ resultado: "Inventado" }).success).toBe(false);
   });
 });

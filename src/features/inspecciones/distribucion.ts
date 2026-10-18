@@ -3,8 +3,7 @@
 
 // ≥1024 px: formulario de 360 px a la izquierda y listado a la derecha.
 // Menos: una columna (formulario, resumen, filtros, lista).
-export const DISTRIBUCION =
-  "grid gap-6 lg:grid-cols-[360px_minmax(0,1fr)] lg:items-start";
+export const DISTRIBUCION = "grid gap-6 lg:grid-cols-[360px_minmax(0,1fr)] lg:items-start";
 
 // El formulario se queda fijo al desplazar. Si no cabe en la ventana
 // (pantallas bajas o con errores visibles), se desplaza por dentro en lugar
@@ -14,8 +13,7 @@ export const COLUMNA_FORMULARIO =
 
 export const COLUMNA_LISTADO = "flex min-w-0 flex-col gap-6";
 
-export const ENCABEZADO_LISTADO =
-  "flex flex-col gap-4 border-b border-borde p-4 sm:p-5";
+export const ENCABEZADO_LISTADO = "flex flex-col gap-4 border-b border-borde p-4 sm:p-5";
 
 // Formulario. En una columna (640–1023 px) los campos van en rejilla de 6:
 // Producto | Lote, y Fecha | Revisadas | Defectuosas; vista previa a todo el

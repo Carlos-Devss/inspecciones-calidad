@@ -38,8 +38,7 @@ function resumenEsperado(lista: { unidadesRevisadas: number; unidadesDefectuosas
     totalInspecciones: lista.length,
     totalRevisadas,
     totalDefectuosas,
-    porcentajeGlobal:
-      totalRevisadas > 0 ? (totalDefectuosas / totalRevisadas) * 100 : null,
+    porcentajeGlobal: totalRevisadas > 0 ? (totalDefectuosas / totalRevisadas) * 100 : null,
   };
 }
 
@@ -76,10 +75,7 @@ describe("construirListado", () => {
   });
 
   it("si el filtro deja la lista vacía, el porcentaje global es null", () => {
-    const { inspecciones, resumen } = construirListado(
-      [fila("1", 100, 0)],
-      "Rechazado",
-    );
+    const { inspecciones, resumen } = construirListado([fila("1", 100, 0)], "Rechazado");
 
     expect(inspecciones).toEqual([]);
     expect(resumen).toEqual({

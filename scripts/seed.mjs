@@ -15,17 +15,11 @@ const cliente = new pg.Client({ connectionString: process.env.DATABASE_URL });
 await cliente.connect();
 
 try {
-  const { rows } = await cliente.query(
-    "SELECT count(*)::int AS total FROM inspecciones",
-  );
+  const { rows } = await cliente.query("SELECT count(*)::int AS total FROM inspecciones");
   if (rows[0].total > 0) {
-    console.log(
-      `La tabla inspecciones ya tiene ${rows[0].total} registros; no se insertó nada.`,
-    );
+    console.log(`La tabla inspecciones ya tiene ${rows[0].total} registros; no se insertó nada.`);
   } else {
-    const archivos = (await readdir(carpeta))
-      .filter((archivo) => archivo.endsWith(".sql"))
-      .sort();
+    const archivos = (await readdir(carpeta)).filter((archivo) => archivo.endsWith(".sql")).sort();
 
     // Todos los seeds en una sola transacción: si uno falla, no queda nada a medias.
     try {

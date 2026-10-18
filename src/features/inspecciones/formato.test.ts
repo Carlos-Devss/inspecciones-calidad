@@ -52,17 +52,10 @@ describe("formatearEntero", () => {
 
 describe("describirResultados", () => {
   it("cuenta cada resultado en orden y omite los que están en 0", () => {
-    expect(
-      describirResultados([
-        "Rechazado",
-        "Aprobado",
-        "Con observaciones",
-        "Aprobado",
-      ]),
-    ).toEqual(["2 aprobadas", "1 con observaciones", "1 rechazada"]);
-    expect(describirResultados(["Rechazado", "Rechazado"])).toEqual([
-      "2 rechazadas",
-    ]);
+    expect(describirResultados(["Rechazado", "Aprobado", "Con observaciones", "Aprobado"])).toEqual(
+      ["2 aprobadas", "1 con observaciones", "1 rechazada"],
+    );
+    expect(describirResultados(["Rechazado", "Rechazado"])).toEqual(["2 rechazadas"]);
   });
 
   it("con lista vacía no dice nada", () => {

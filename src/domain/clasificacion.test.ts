@@ -10,9 +10,7 @@ describe("clasificarInspeccion", () => {
   ])(
     "$revisadas revisadas y $defectuosas defectuosas → $esperado",
     ({ revisadas, defectuosas, esperado }) => {
-      expect(clasificarInspeccion(revisadas, defectuosas).resultado).toBe(
-        esperado,
-      );
+      expect(clasificarInspeccion(revisadas, defectuosas).resultado).toBe(esperado);
     },
   );
 
@@ -93,8 +91,6 @@ describe("clasificarInspeccion", () => {
       mensaje: "Las unidades defectuosas no pueden ser más que las revisadas.",
     },
   ])("rechaza $caso", ({ revisadas, defectuosas, mensaje }) => {
-    expect(() => clasificarInspeccion(revisadas, defectuosas)).toThrow(
-      mensaje,
-    );
+    expect(() => clasificarInspeccion(revisadas, defectuosas)).toThrow(mensaje);
   });
 });

@@ -26,9 +26,7 @@ try {
   const aplicadas = new Set(rows.map((fila) => fila.nombre));
 
   // El prefijo numérico (001_, 002_...) hace que el orden alfabético sea el correcto.
-  const archivos = (await readdir(carpeta))
-    .filter((archivo) => archivo.endsWith(".sql"))
-    .sort();
+  const archivos = (await readdir(carpeta)).filter((archivo) => archivo.endsWith(".sql")).sort();
 
   for (const archivo of archivos) {
     if (aplicadas.has(archivo)) {
@@ -41,9 +39,7 @@ try {
     try {
       await cliente.query("BEGIN");
       await cliente.query(sql);
-      await cliente.query("INSERT INTO schema_migrations (nombre) VALUES ($1)", [
-        archivo,
-      ]);
+      await cliente.query("INSERT INTO schema_migrations (nombre) VALUES ($1)", [archivo]);
       await cliente.query("COMMIT");
       console.log(`Aplicada: ${archivo}`);
     } catch (error) {
