@@ -48,7 +48,7 @@ Pantalla para registrar inspecciones de calidad (producto, lote, fecha, unidades
 
 - `npm run lint`, `npm test`, `npm run build` — lint, pruebas (Vitest) y build.
 - `npm run format` aplica Prettier; `npm run format:check` solo verifica (lo corre CI).
-- `npm run typecheck` — `tsc --noEmit`.
+- `npm run typecheck` — `next typegen && tsc --noEmit` (genera los tipos de rutas de Next, como `LayoutProps`, antes de revisar).
 - CI (`.github/workflows/ci.yml`) corre en cada PR hacia `main` y en push a `main`: lint, format:check, typecheck, test y build. Node sale de `.nvmrc`.
 
 ## Reglas de trabajo
