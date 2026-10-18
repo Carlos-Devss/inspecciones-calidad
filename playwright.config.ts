@@ -12,6 +12,9 @@ export default defineConfig({
   fullyParallel: false,
   forbidOnly: enCI,
   reporter: [["list"], ["html", { open: "never" }]],
+  // Marca la corrida y, al final, borra sus inspecciones (lotes E2E-<marca>-*).
+  globalSetup: "./e2e/global-setup.ts",
+  globalTeardown: "./e2e/global-teardown.ts",
   use: {
     baseURL: "http://localhost:3100",
     trace: "retain-on-failure",
