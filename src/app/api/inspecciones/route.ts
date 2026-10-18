@@ -1,9 +1,5 @@
 import { connection, type NextRequest } from "next/server";
-import {
-  crearInspeccionSchema,
-  erroresPorCampo,
-  filtrosSchema,
-} from "@/shared/inspeccion.schema";
+import { crearInspeccionSchema, erroresPorCampo, filtrosSchema } from "@/shared/inspeccion.schema";
 import {
   ErrorDeValidacion,
   obtenerListado,
@@ -18,9 +14,7 @@ export async function GET(request: NextRequest) {
   // Siempre datos frescos: la respuesta se calcula en cada petición.
   await connection();
 
-  const filtros = filtrosSchema.safeParse(
-    Object.fromEntries(request.nextUrl.searchParams),
-  );
+  const filtros = filtrosSchema.safeParse(Object.fromEntries(request.nextUrl.searchParams));
   if (!filtros.success) {
     return respuestaValidacion(erroresPorCampo(filtros.error));
   }

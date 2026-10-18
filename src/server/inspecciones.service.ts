@@ -48,9 +48,7 @@ export function construirListado(
   return { inspecciones, resumen };
 }
 
-export async function obtenerListado(
-  filtros: Filtros,
-): Promise<ListadoInspecciones> {
+export async function obtenerListado(filtros: Filtros): Promise<ListadoInspecciones> {
   // El producto se filtra en SQL (es una columna guardada). El resultado se
   // filtra aquí porque se calcula al leer y no existe en la BD.
   const filas = await repositorio.listarInspecciones({
@@ -59,9 +57,7 @@ export async function obtenerListado(
   return construirListado(filas, filtros.resultado);
 }
 
-export async function registrarInspeccion(
-  datos: CrearInspeccion,
-): Promise<InspeccionClasificada> {
+export async function registrarInspeccion(datos: CrearInspeccion): Promise<InspeccionClasificada> {
   if (!(await repositorio.existeProducto(datos.productoCodigo))) {
     throw new ErrorDeValidacion({ productoCodigo: MENSAJES.productoNoExiste });
   }

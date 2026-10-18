@@ -27,13 +27,8 @@ async function obtenerJson<T>(ruta: string, signal?: AbortSignal): Promise<T> {
   return (await respuesta.json()) as T;
 }
 
-export async function obtenerProductos(
-  signal?: AbortSignal,
-): Promise<Producto[]> {
-  const { productos } = await obtenerJson<{ productos: Producto[] }>(
-    "/api/productos",
-    signal,
-  );
+export async function obtenerProductos(signal?: AbortSignal): Promise<Producto[]> {
+  const { productos } = await obtenerJson<{ productos: Producto[] }>("/api/productos", signal);
   return productos;
 }
 
@@ -62,9 +57,7 @@ export type ResultadoGuardado =
   // 500, respuesta inesperada o sin conexión: lo capturado no se pierde.
   | { tipo: "fallo" };
 
-export async function crearInspeccion(
-  datos: CrearInspeccion,
-): Promise<ResultadoGuardado> {
+export async function crearInspeccion(datos: CrearInspeccion): Promise<ResultadoGuardado> {
   try {
     const respuesta = await fetch("/api/inspecciones", {
       method: "POST",

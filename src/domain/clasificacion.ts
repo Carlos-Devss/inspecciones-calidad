@@ -31,9 +31,7 @@ export function clasificarInspeccion(
     throw new Error("Las unidades defectuosas no pueden ser negativas.");
   }
   if (defectuosas > revisadas) {
-    throw new Error(
-      "Las unidades defectuosas no pueden ser más que las revisadas.",
-    );
+    throw new Error("Las unidades defectuosas no pueden ser más que las revisadas.");
   }
 
   // El porcentaje es solo para mostrarlo; no se redondea aquí.

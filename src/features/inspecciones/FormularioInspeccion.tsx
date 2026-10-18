@@ -14,10 +14,7 @@ import {
   fechaDeHoy,
   type CrearInspeccion,
 } from "@/shared/inspeccion.schema";
-import type {
-  InspeccionClasificada,
-  Producto,
-} from "@/shared/inspeccion.types";
+import type { InspeccionClasificada, Producto } from "@/shared/inspeccion.types";
 import { crearInspeccion } from "./api-client";
 import {
   BOTON_GUARDAR,
@@ -54,8 +51,7 @@ const DEPENDIENTES: Record<Campo, Campo[]> = {
 
 export const ID_CAMPO_PRODUCTO = "inspeccion-producto";
 
-const MENSAJE_FALLO =
-  "No se pudo guardar la inspección. Revisa tu conexión e inténtalo de nuevo.";
+const MENSAJE_FALLO = "No se pudo guardar la inspección. Revisa tu conexión e inténtalo de nuevo.";
 
 // Vacío (o solo espacios) es "sin dato", nunca 0: así el esquema lo marca
 // como obligatorio. Cualquier otro texto pasa por Number y, si no es un
@@ -119,9 +115,7 @@ export function FormularioInspeccion({
   // El estado tarda un render en actualizarse; la ref bloquea un segundo
   // envío inmediato (doble clic o Enter repetido).
   const enviando = useRef(false);
-  const controles = useRef<
-    Partial<Record<Campo, HTMLInputElement | HTMLSelectElement | null>>
-  >({});
+  const controles = useRef<Partial<Record<Campo, HTMLInputElement | HTMLSelectElement | null>>>({});
 
   const hoy = fechaDeHoy();
 
@@ -228,19 +222,11 @@ export function FormularioInspeccion({
     <Panel aria-labelledby="titulo-formulario" className="p-4 sm:p-5">
       <PanelTitulo id="titulo-formulario">Nueva inspección</PanelTitulo>
 
-      <form
-        noValidate
-        onSubmit={enviar}
-        className={unir("mt-4", FORMULARIO_REJILLA)}
-      >
+      <form noValidate onSubmit={enviar} className={unir("mt-4", FORMULARIO_REJILLA)}>
         {fallo && <Banner className={CAMPO_COMPLETO}>{fallo}</Banner>}
 
         <div className={unir("flex flex-col gap-2", CAMPO_MEDIO)}>
-          <Field
-            id={ID_CAMPO_PRODUCTO}
-            etiqueta="Producto"
-            error={errores.productoCodigo}
-          >
+          <Field id={ID_CAMPO_PRODUCTO} etiqueta="Producto" error={errores.productoCodigo}>
             {(control) => (
               <Select
                 {...control}
@@ -277,12 +263,7 @@ export function FormularioInspeccion({
           )}
         </div>
 
-        <Field
-          id="inspeccion-lote"
-          etiqueta="Lote"
-          error={errores.lote}
-          className={CAMPO_MEDIO}
-        >
+        <Field id="inspeccion-lote" etiqueta="Lote" error={errores.lote} className={CAMPO_MEDIO}>
           {(control) => (
             <Input
               {...control}

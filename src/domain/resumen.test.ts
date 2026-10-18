@@ -20,8 +20,7 @@ describe("resumirInspecciones", () => {
 
     // Promediar los porcentajes individuales (0% y 20%) daría 10%, que es incorrecto.
     const promedioDePorcentajes =
-      lista.reduce((suma, i) => suma + (i.defectuosas / i.revisadas) * 100, 0) /
-      lista.length;
+      lista.reduce((suma, i) => suma + (i.defectuosas / i.revisadas) * 100, 0) / lista.length;
     expect(promedioDePorcentajes).toBe(10);
     expect(resumen.porcentajeGlobal).not.toBe(promedioDePorcentajes);
   });

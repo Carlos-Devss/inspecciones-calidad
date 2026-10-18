@@ -23,8 +23,7 @@ export function FiltrosInspecciones({ productos, filtros, onCambiar }: Props) {
   // Si la URL trae un producto que el catálogo aún no carga (o no existe),
   // se agrega como opción para que el select muestre lo que se filtra.
   const productoDesconocido =
-    filtros.producto &&
-    !productos.some((producto) => producto.codigo === filtros.producto);
+    filtros.producto && !productos.some((producto) => producto.codigo === filtros.producto);
 
   return (
     <div className="flex flex-col gap-4 md:flex-row md:flex-wrap md:items-end">
@@ -36,14 +35,10 @@ export function FiltrosInspecciones({ productos, filtros, onCambiar }: Props) {
             <Select
               {...control}
               value={filtros.producto ?? ""}
-              onChange={(e) =>
-                onCambiar({ ...filtros, producto: e.target.value || undefined })
-              }
+              onChange={(e) => onCambiar({ ...filtros, producto: e.target.value || undefined })}
             >
               <option value="">Todos los productos</option>
-              {productoDesconocido && (
-                <option value={filtros.producto}>{filtros.producto}</option>
-              )}
+              {productoDesconocido && <option value={filtros.producto}>{filtros.producto}</option>}
               {productos.map((producto) => (
                 <option key={producto.codigo} value={producto.codigo}>
                   {producto.codigo} {producto.nombre}
@@ -68,11 +63,7 @@ export function FiltrosInspecciones({ productos, filtros, onCambiar }: Props) {
       />
 
       {hayFiltros && (
-        <Button
-          variante="sutil"
-          className="self-start md:self-auto"
-          onClick={() => onCambiar({})}
-        >
+        <Button variante="sutil" className="self-start md:self-auto" onClick={() => onCambiar({})}>
           Limpiar filtros
         </Button>
       )}

@@ -77,9 +77,7 @@ export function VistaPrevia({ cantidades }: Props) {
             <ResultadoSello resultado={clasificacion.resultado} />
           </>
         ) : (
-          <p className="text-sm text-niebla">
-            Captura las unidades para ver el resultado
-          </p>
+          <p className="text-sm text-niebla">Captura las unidades para ver el resultado</p>
         )}
       </div>
 
@@ -118,12 +116,7 @@ function MedidorTolerancia({ porcentaje }: { porcentaje: number | null }) {
               width: `${posicion(hasta) - posicion(desde)}%`,
             }}
           >
-            <span
-              className={unir(
-                "text-xs leading-4 font-medium whitespace-nowrap",
-                color,
-              )}
-            >
+            <span className={unir("text-xs leading-4 font-medium whitespace-nowrap", color)}>
               {corto ? (
                 <>
                   <span className="hidden @min-[7rem]:inline">{resultado}</span>
@@ -142,10 +135,7 @@ function MedidorTolerancia({ porcentaje }: { porcentaje: number | null }) {
       <div className="overflow-hidden px-2 py-1.5">
         <div className="relative h-2.5">
           <div className="absolute inset-0 flex overflow-hidden rounded-full">
-            <div
-              className="bg-aprobado-fondo"
-              style={{ width: `${posicion(LIMITE_APROBADO)}%` }}
-            />
+            <div className="bg-aprobado-fondo" style={{ width: `${posicion(LIMITE_APROBADO)}%` }} />
             <div
               className="bg-observaciones-fondo"
               style={{
@@ -179,10 +169,7 @@ function MedidorTolerancia({ porcentaje }: { porcentaje: number | null }) {
         </div>
       </div>
 
-      <div
-        aria-hidden
-        className="relative mx-2 mt-1 h-5 text-etiqueta text-niebla"
-      >
+      <div aria-hidden className="relative mx-2 mt-1 h-5 text-etiqueta text-niebla">
         <span className="absolute left-0">0%</span>
         {limites.map((limite) => (
           <span

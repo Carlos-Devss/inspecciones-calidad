@@ -33,10 +33,7 @@ export function useToast(duracion = 4000) {
         saliendo: false,
       }));
       temporizadores.current = [
-        window.setTimeout(
-          () => setToast((t) => (t ? { ...t, saliendo: true } : t)),
-          duracion,
-        ),
+        window.setTimeout(() => setToast((t) => (t ? { ...t, saliendo: true } : t)), duracion),
         window.setTimeout(() => setToast(null), duracion + DURACION_SALIDA),
       ];
     },
@@ -68,9 +65,7 @@ export function Toast({ toast }: { toast: EstadoToast | null }) {
           <CircleCheck size={16} aria-hidden className="mt-0.5 shrink-0" />
           <div>
             <p className="font-medium">{toast.mensaje}</p>
-            {toast.detalle && (
-              <p className="mt-0.5 text-lamina/80">{toast.detalle}</p>
-            )}
+            {toast.detalle && <p className="mt-0.5 text-lamina/80">{toast.detalle}</p>}
           </div>
         </div>
       )}

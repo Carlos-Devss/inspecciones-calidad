@@ -22,8 +22,7 @@ export function resumirInspecciones(
   // peso a una inspección de 10 piezas que a una de 100, y eso distorsiona el
   // resultado: con 100/0 y 10/2 el promedio da 10%, pero de 110 piezas solo
   // 2 salieron defectuosas, que es 1.82%.
-  const porcentajeGlobal =
-    totalRevisadas > 0 ? (totalDefectuosas / totalRevisadas) * 100 : null;
+  const porcentajeGlobal = totalRevisadas > 0 ? (totalDefectuosas / totalRevisadas) * 100 : null;
 
   return {
     totalInspecciones: lista.length,

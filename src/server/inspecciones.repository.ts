@@ -44,10 +44,9 @@ export async function listarProductos(): Promise<Producto[]> {
 }
 
 export async function existeProducto(codigo: string): Promise<boolean> {
-  const { rowCount } = await obtenerPool().query(
-    "SELECT 1 FROM productos WHERE codigo = $1",
-    [codigo],
-  );
+  const { rowCount } = await obtenerPool().query("SELECT 1 FROM productos WHERE codigo = $1", [
+    codigo,
+  ]);
   return rowCount === 1;
 }
 
@@ -68,9 +67,7 @@ export async function listarInspecciones(filtros: {
   return rows.map(aInspeccion);
 }
 
-export async function crearInspeccion(
-  datos: CrearInspeccion,
-): Promise<InspeccionGuardada> {
+export async function crearInspeccion(datos: CrearInspeccion): Promise<InspeccionGuardada> {
   // El CTE inserta y, en la misma consulta, une con productos para
   // regresar la fila completa con el nombre del producto.
   const { rows } = await obtenerPool().query<FilaInspeccion>(

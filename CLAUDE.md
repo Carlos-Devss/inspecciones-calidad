@@ -1,9 +1,11 @@
 @AGENTS.md
 
 # Inspecciones de calidad — prueba técnica
+
 Pantalla para registrar inspecciones de calidad (producto, lote, fecha, unidades revisadas, unidades defectuosas) con tabla, filtros y tarjetas de resumen. Next.js (App Router) + TypeScript + PostgreSQL (driver `pg`, SQL plano, sin ORM) + Zod + Vitest + Tailwind. Interfaz en español.
 
 ## Arquitectura (respetarla siempre)
+
 - `src/app/` — rutas. `page.tsx` solo compone la pantalla; `api/*/route.ts` son el backend HTTP. Sin lógica de negocio aquí.
 - `src/domain/` — lógica de negocio pura (clasificación y resumen). Sin React, sin BD, sin Next. Cada archivo con su `.test.ts` al lado.
 - `src/server/` — solo servidor (`import "server-only"`):
@@ -14,6 +16,7 @@ Pantalla para registrar inspecciones de calidad (producto, lote, fecha, unidades
 - `src/shared/` — esquemas Zod y tipos que usan cliente y servidor. Un solo esquema valida el formulario y la API.
 
 ## Contrato de la API
+
 - `GET /api/productos` → 200 `{ productos }`.
 - `GET /api/inspecciones?producto=P001&resultado=Rechazado` (ambos opcionales) → 200 `{ inspecciones, resumen }`.
 - `POST /api/inspecciones` → 201 `{ inspeccion }`.
@@ -27,11 +30,13 @@ Pantalla para registrar inspecciones de calidad (producto, lote, fecha, unidades
 - `db/` — SQL numerado. `db/migrations/` tiene las migraciones (incluye el catálogo de productos); `npm run db:migrate` (`scripts/migrate.mjs`) aplica en orden las pendientes y las registra en `schema_migrations`. `db/seeds/` tiene datos de demostración; `npm run db:seed` (`scripts/seed.mjs`) los inserta solo si `inspecciones` está vacía.
 
 ## Decisiones
+
 - El resultado y los porcentajes NO se guardan en la BD: se calculan al leer con `src/domain/`. Así un cambio de límite reclasifica todo.
 - La API de listado regresa la lista filtrada y su resumen en la misma respuesta, para que tabla y tarjetas siempre coincidan.
 - Los límites de clasificación viven en constantes en `src/domain/clasificacion.ts`.
 
 ## Diseño
+
 - El color solo significa resultado: toda la interfaz es neutra (incluidos errores, banners y toast); el color vive solo en `ResultadoSello` y en los tramos del medidor, siempre con icono y texto.
 - Tokens en `@theme` de `globals.css` (los colores de Tailwind están borrados): acero, lamina, grafito, niebla, borde y aprobado/observaciones/rechazado con su `-fondo`. Nada de colores sueltos; contorno de controles = `niebla/75` (3:1).
 - Tipografía: IBM Plex Sans 400/500/600; título 24/600, panel 16/600, cuerpo 14–15/400, etiquetas 13/500 (`text-etiqueta`). Cifras con `tabular-nums` (global en `body`). Sin mayúsculas sostenidas ni monoespaciada.
@@ -40,6 +45,7 @@ Pantalla para registrar inspecciones de calidad (producto, lote, fecha, unidades
 - Sin scroll horizontal de 320 a 1920px: la lista cambia de tabla a tarjetas por ancho del contenedor, no del viewport. Áreas táctiles ≥40px en móvil.
 
 ## Reglas de trabajo
+
 - El código se escribe con asistencia de IA; Carlos revisa y aprueba cada paso. No modifiques `src/domain/` salvo que él lo pida explícitamente.
 - Commits pequeños, uno por cambio lógico, en español con prefijo convencional (feat, fix, chore, docs, test, refactor). Nunca squash, amend ni force push.
 - No toques la configuración de git (user.name, user.email, remotes).

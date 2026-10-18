@@ -35,13 +35,7 @@ export function Field({ id, etiqueta, error, className, children }: Props) {
   );
 }
 
-export function MensajeError({
-  id,
-  children,
-}: {
-  id?: string;
-  children: ReactNode;
-}) {
+export function MensajeError({ id, children }: { id?: string; children: ReactNode }) {
   return (
     <p id={id} className="flex items-start gap-1.5 text-etiqueta text-grafito">
       <CircleAlert size={16} aria-hidden className="mt-0.5 shrink-0" />

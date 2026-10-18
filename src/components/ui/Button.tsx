@@ -47,9 +47,7 @@ export function Button({
       )}
       {...resto}
     >
-      {cargando && (
-        <LoaderCircle size={16} aria-hidden className="animate-spin" />
-      )}
+      {cargando && <LoaderCircle size={16} aria-hidden className="animate-spin" />}
       {children}
     </button>
   );

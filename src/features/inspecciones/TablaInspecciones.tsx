@@ -2,11 +2,7 @@ import { ResultadoSello } from "@/components/ui/ResultadoSello";
 import { SkeletonTexto } from "@/components/ui/Skeleton";
 import { unir } from "@/components/ui/clases";
 import type { InspeccionClasificada } from "@/shared/inspeccion.types";
-import {
-  formatearEntero,
-  formatearFecha,
-  formatearPorcentaje,
-} from "./formato";
+import { formatearEntero, formatearFecha, formatearPorcentaje } from "./formato";
 
 type Props = {
   inspecciones: InspeccionClasificada[];
@@ -23,8 +19,7 @@ type Props = {
 //             y una sola columna "Defectuosas / revisadas"
 //   < 560     tarjetas, una por inspección
 const TABLA_VISIBLE = "hidden @min-[35rem]:table";
-const TARJETAS_VISIBLES =
-  "grid gap-3 p-4 @min-[35rem]:hidden";
+const TARJETAS_VISIBLES = "grid gap-3 p-4 @min-[35rem]:hidden";
 const SOLO_COMPLETA = "hidden @min-[51.25rem]:table-cell";
 const SOLO_COMPACTA = "@min-[51.25rem]:hidden";
 
@@ -59,11 +54,7 @@ const FILA = "[&:last-child>td]:border-b-0";
 const TARJETA = "rounded-panel border border-borde p-4";
 const FILAS_ESQUELETO = 6;
 
-export function TablaInspecciones({
-  inspecciones,
-  idResaltado,
-  descripcion,
-}: Props) {
+export function TablaInspecciones({ inspecciones, idResaltado, descripcion }: Props) {
   return (
     <div className="@container">
       <table className={unir(TABLA, TABLA_VISIBLE)}>
@@ -73,10 +64,7 @@ export function TablaInspecciones({
           {inspecciones.map((inspeccion) => (
             <tr
               key={inspeccion.id}
-              className={unir(
-                FILA,
-                inspeccion.id === idResaltado && "fila-nueva",
-              )}
+              className={unir(FILA, inspeccion.id === idResaltado && "fila-nueva")}
             >
               <td className={unir(CELDA, "py-3 whitespace-nowrap")}>
                 <time dateTime={inspeccion.fecha} className="block">
@@ -88,34 +76,21 @@ export function TablaInspecciones({
                 </span>
               </td>
               {/* El nombre no se parte salvo en lo más angosto de la compacta. */}
-              <td
-                className={unir(
-                  CELDA,
-                  "py-3 whitespace-nowrap @max-[36rem]:whitespace-normal",
-                )}
-              >
+              <td className={unir(CELDA, "py-3 whitespace-nowrap @max-[36rem]:whitespace-normal")}>
                 {inspeccion.productoNombre}
                 {/* En la compacta el código va debajo, como texto secundario. */}
                 <span className="block text-etiqueta text-niebla @min-[51.25rem]:ml-1.5 @min-[51.25rem]:inline">
                   {inspeccion.productoCodigo}
                 </span>
               </td>
-              <td className={unir(CELDA, SOLO_COMPLETA, "py-3 break-all")}>
-                {inspeccion.lote}
-              </td>
+              <td className={unir(CELDA, SOLO_COMPLETA, "py-3 break-all")}>{inspeccion.lote}</td>
               <td className={unir(CELDA, SOLO_COMPLETA, "py-3 text-right")}>
                 {formatearEntero(inspeccion.unidadesRevisadas)}
               </td>
               <td className={unir(CELDA, SOLO_COMPLETA, "py-3 text-right")}>
                 {formatearEntero(inspeccion.unidadesDefectuosas)}
               </td>
-              <td
-                className={unir(
-                  CELDA,
-                  SOLO_COMPACTA,
-                  "py-3 text-right whitespace-nowrap",
-                )}
-              >
+              <td className={unir(CELDA, SOLO_COMPACTA, "py-3 text-right whitespace-nowrap")}>
                 {formatearEntero(inspeccion.unidadesDefectuosas)} /{" "}
                 {formatearEntero(inspeccion.unidadesRevisadas)}
               </td>
@@ -137,10 +112,7 @@ export function TablaInspecciones({
         {inspecciones.map((inspeccion) => (
           <li
             key={inspeccion.id}
-            className={unir(
-              TARJETA,
-              inspeccion.id === idResaltado && "fila-nueva",
-            )}
+            className={unir(TARJETA, inspeccion.id === idResaltado && "fila-nueva")}
           >
             <TarjetaInspeccion inspeccion={inspeccion} />
           </li>
@@ -172,10 +144,7 @@ function Encabezado() {
           >
             {titulo}
             {titulo === "Fecha" && (
-              <span className="whitespace-nowrap @min-[51.25rem]:hidden">
-                {" "}
-                / lote
-              </span>
+              <span className="whitespace-nowrap @min-[51.25rem]:hidden"> / lote</span>
             )}
           </th>
         ))}
@@ -184,11 +153,7 @@ function Encabezado() {
   );
 }
 
-function TarjetaInspeccion({
-  inspeccion,
-}: {
-  inspeccion: InspeccionClasificada;
-}) {
+function TarjetaInspeccion({ inspeccion }: { inspeccion: InspeccionClasificada }) {
   const cifras = [
     ["Revisadas", formatearEntero(inspeccion.unidadesRevisadas)],
     ["Defectuosas", formatearEntero(inspeccion.unidadesDefectuosas)],
@@ -197,10 +162,7 @@ function TarjetaInspeccion({
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <time
-          dateTime={inspeccion.fecha}
-          className="text-etiqueta text-niebla"
-        >
+        <time dateTime={inspeccion.fecha} className="text-etiqueta text-niebla">
           {formatearFecha(inspeccion.fecha)}
         </time>
         <ResultadoSello resultado={inspeccion.resultado} />
@@ -235,10 +197,7 @@ export function TablaInspeccionesEsqueleto() {
           {filas.map((fila) => (
             <tr key={fila} className={FILA}>
               {COLUMNAS.map(({ titulo, numerica, modo }) => (
-                <td
-                  key={titulo}
-                  className={unir(CELDA, claseModo(modo), "py-3")}
-                >
+                <td key={titulo} className={unir(CELDA, claseModo(modo), "py-3")}>
                   <SkeletonTexto
                     className={unir(
                       titulo === "Resultado" ? "h-4 w-28" : "w-14",
@@ -247,10 +206,7 @@ export function TablaInspeccionesEsqueleto() {
                   />
                   {/* Código y lote ocupan una segunda línea en la compacta. */}
                   {(titulo === "Producto" || titulo === "Fecha") && (
-                    <SkeletonTexto
-                      alto="h-5 @min-[51.25rem]:hidden"
-                      className="w-10"
-                    />
+                    <SkeletonTexto alto="h-5 @min-[51.25rem]:hidden" className="w-10" />
                   )}
                 </td>
               ))}
