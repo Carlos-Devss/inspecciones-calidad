@@ -45,3 +45,56 @@ jobs:
       # El pool de pg se crea al primer uso, así que el build no necesita BD.
       - name: Build
         run: npm run build
+
+  e2e:
+    name: E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # PostgreSQL desechable solo para esta corrida. Usuario y contraseña de
+    # prueba: no son secretos y la base desaparece al terminar el job.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: e2e
+          POSTGRES_PASSWORD: e2e
+          POSTGRES_DB: inspecciones
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U e2e -d inspecciones"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://e2e:e2e@localhost:5432/inspecciones
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Migraciones
+        run: npm run db:migrate
+
+      - name: Datos de demostración
+        run: npm run db:seed
+
+      - name: Instalar Chromium de Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Pruebas E2E
+        run: npm run test:e2e
+
+      - name: Subir reporte de Playwright
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

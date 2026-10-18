@@ -49,7 +49,15 @@ Pantalla para registrar inspecciones de calidad (producto, lote, fecha, unidades
 - `npm run lint`, `npm test`, `npm run build` — lint, pruebas (Vitest) y build.
 - `npm run format` aplica Prettier; `npm run format:check` solo verifica (lo corre CI).
 - `npm run typecheck` — `next typegen && tsc --noEmit` (genera los tipos de rutas de Next, como `LayoutProps`, antes de revisar).
-- CI (`.github/workflows/ci.yml`) corre en cada PR hacia `main` y en push a `main`: lint, format:check, typecheck, test y build. Node sale de `.nvmrc`.
+- `npm run test:e2e` — Playwright contra la app compilada (`next build` + `next start` en el puerto 3100), en Chromium de escritorio (1440×900) y móvil (Pixel 7). Usa la BD de `DATABASE_URL` (en local, la de `.env.local`). La primera vez: `npx playwright install chromium`.
+- CI (`.github/workflows/ci.yml`) corre en cada PR hacia `main` y en push a `main`. Job `verificar`: lint, format:check, typecheck, test y build. Job `e2e`: PostgreSQL 16 temporal, migraciones, seed y `test:e2e`; si falla, sube `playwright-report/` como artefacto. Node sale de `.nvmrc`.
+
+## Pruebas
+
+- Vitest: `*.test.ts` junto al archivo que prueban (`vitest.config.mts` excluye `e2e/`).
+- `e2e/` — pruebas de Playwright, una por criterio: `criterio-aceptacion`, `validaciones`, `filtros-y-tarjetas`, `estados-de-error`, `accesibilidad` (axe, sin violaciones serias ni críticas) y `movil` (sin scroll horizontal). `datos.ts` (API y BD) y `pantalla.ts` (lee tabla o tarjetas y el resumen) son las utilidades.
+- Datos aislados: todo lo que crea una prueba lleva el lote `E2E-<marca de la corrida>-<n>` (`loteUnico`). `global-teardown.ts` borra al final solo los lotes de esa corrida. Nunca crear datos E2E con otro lote ni borrar fuera de ese prefijo.
+- Las pruebas no suponen totales fijos: comparan contra la API o contra lo que muestra la pantalla, para pasar igual con la base del seed (CI) que con la de desarrollo. Corren en serie (`workers: 1`) porque comparten la base.
 
 ## Reglas de trabajo
 
